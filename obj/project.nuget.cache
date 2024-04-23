@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "LYALlSsN6y3fbEpX9tC2Joj4UTJZacu6CBQ/ECAAx+5pHeuiNjW/xUk7JfdTQi7UE7O14Ld1fiBJaKAFSYaVjg==",
+  "dgSpecHash": "0wQ4niLYLk0QIfuWpzOxd/BQamx+7Rbv32CCd6V7fdxbIRkBmXpdnTjNGblZaa9odobDd4P/g+IhfK9/CAWA6g==",
   "success": true,
   "projectFilePath": "D:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\Chess-Opening-Trainer-V2.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Isaac\\.nuget\\packages\\ardalis.smartenum\\2.0.1\\ardalis.smartenum.2.0.1.nupkg.sha512",
+    "C:\\Users\\Isaac\\.nuget\\packages\\gera.chess\\1.1.0\\gera.chess.1.1.0.nupkg.sha512"
+  ],
   "logs": []
 }
