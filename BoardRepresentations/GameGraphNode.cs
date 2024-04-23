@@ -50,7 +50,7 @@ class GameGraphNode
     public HashSet<GameGraphNode> Parents { get; }
     public HashSet<GameGraphNode> Children { get; }
     public Fen PositionAfterMove{ get; }
-    public Move? Move{ get; }
+    public BoardRepresentations.Move? Move{ get; }
     public string Comment{ get; }
     public Chess.PieceColor ColorToMove{ get; }
     private GameGraphNode(HashSet<GameGraphNode> Parents, HashSet<GameGraphNode> Children, Fen PositionAfterMove, Move? Move, PieceColor Color, string? Comment = null)

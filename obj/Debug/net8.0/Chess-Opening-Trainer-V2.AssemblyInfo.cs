@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Chess-Opening-Trainer-V2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+72119f3ffaa5a646989c589bda894720da3f9c09")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a93e716d402c86cd9d5cd45b64a255bd5905161e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Chess-Opening-Trainer-V2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Chess-Opening-Trainer-V2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "d:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\Chess-Opening-Trainer-V2.csproj": {}
+    "D:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\Chess-Opening-Trainer-V2.csproj": {}
   },
   "projects": {
-    "d:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\Chess-Opening-Trainer-V2.csproj": {
+    "D:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\Chess-Opening-Trainer-V2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "d:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\Chess-Opening-Trainer-V2.csproj",
+        "projectUniqueName": "D:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\Chess-Opening-Trainer-V2.csproj",
         "projectName": "Chess-Opening-Trainer-V2",
-        "projectPath": "d:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\Chess-Opening-Trainer-V2.csproj",
+        "projectPath": "D:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\Chess-Opening-Trainer-V2.csproj",
         "packagesPath": "C:\\Users\\Isaac\\.nuget\\packages\\",
-        "outputPath": "d:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\obj\\",
+        "outputPath": "D:\\coding\\c#\\chess\\Chess-Opening-Trainer-V2\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -28,39 +28,42 @@ class LichessPgnParser : BasePgnParser, IPgnParser
                 Start = Current;
             }
             //then, extract the half-move(the length check being in-front is important as it should short-circuit, preventing the access of Pgn[Current] which would be invalid when the length check is false)
-            while(Current < Pgn.Length &&!IsWhiteSpace(Pgn[Current]))
-            {
-                Current++;
-            }
-            CurrentAlgMove = Pgn[Start..Current];
-            Console.WriteLine(CurrentAlgMove);
-            CurrentLibMove = new BoardRepresentations.Move(CurrentAlgMove);
-            
-            bool HasComment = false;
-            //don't even try to process comment if we know we've ran out of pgn
-            if(Current < Pgn.Length)
-            {
-                if (IsWhiteSpace(Pgn[Current])) { Current++; } //increase to consume whitespace between two half-moves or between a half-move and a new move, etc
-                //make the move on the board
-                BoardInStartingPosition.Move(CurrentLibMove.AlgebraticMove);
-                if (Current < Pgn.Length && Pgn[Current] == '{')
+            if(Current< Pgn.Length && Pgn[Current] != '(')
+            {    
+                while(Current < Pgn.Length &&!IsWhiteSpace(Pgn[Current]))
                 {
-                    Current += 2;
-                    Start = Current; //Current += 2 to not include the curly brace in start and also not include the leading brace
-                    //check for move-comment
-                    while(Pgn[Current] != '}'){ Current++; }
-                    Current++; //to also remove the space after the curly brace
-                    HasComment = true;
+                    Current++;
                 }
-            
-            }
-             //create current node first, and then try to recurse if necessary
-            NodeStack.Add(GameGraphNode.New((Fen)BoardInStartingPosition.ToFen(), CurrentLibMove, BoardInStartingPosition.Turn, HasComment ? Pgn[Start..(Current - 1)] : null));//current - 1 to skip the curly brace; and whoever's turn it is
-            //then add this to the parent properly
-            NodeStack[^2].AddChildNode(NodeStack[^1]);
-            
-            if(Current < Pgn.Length && HasComment && IsWhiteSpace(Pgn[Current])){ Current++; } //increment current again to skip the space after the comment
-            // again, don't process branches if we've ran out of pgn
+                CurrentAlgMove = Pgn[Start..Current];
+                Console.WriteLine(CurrentAlgMove);
+                CurrentLibMove = new BoardRepresentations.Move(CurrentAlgMove);
+                
+                bool HasComment = false;
+                //don't even try to process comment if we know we've ran out of pgn
+                if(Current < Pgn.Length)
+                {
+                    if (IsWhiteSpace(Pgn[Current])) { Current++; } //increase to consume whitespace between two half-moves or between a half-move and a new move, etc
+                    //make the move on the board
+                    BoardInStartingPosition.Move(CurrentLibMove.AlgebraticMove);
+                    if (Current < Pgn.Length && Pgn[Current] == '{')
+                    {
+                        Current += 2;
+                        Start = Current; //Current += 2 to not include the curly brace in start and also not include the leading brace
+                        //check for move-comment
+                        while(Pgn[Current] != '}'){ Current++; }
+                        Current++; //to also remove the space after the curly brace
+                        HasComment = true;
+                    }
+                
+                }
+                //create current node first, and then try to recurse if necessary
+                NodeStack.Add(GameGraphNode.New((Fen)BoardInStartingPosition.ToFen(), CurrentLibMove, BoardInStartingPosition.Turn, HasComment ? Pgn[Start..(Current - 1)] : null));//current - 1 to skip the curly brace; and whoever's turn it is
+                //then add this to the parent properly
+                NodeStack[^2].AddChildNode(NodeStack[^1]);
+                
+                if(Current < Pgn.Length && HasComment && IsWhiteSpace(Pgn[Current])){ Current++; } //increment current again to skip the space after the comment
+                // again, don't process branches if we've ran out of pgn
+            }    
             if(Current < Pgn.Length && Pgn[Current] == '(')
             {
                 Current++;

@@ -11,9 +11,22 @@ public class Program
         #endregion
         LichessPgnParser parser = new();
         GameGraphNode CurrentGraphNode = parser.GetGameGraph(ExamplePGN);
+        Console.WriteLine();
+        Console.WriteLine();
+        Console.WriteLine("***********************************************************");
+        Console.WriteLine();
+        Console.WriteLine();
         while (!CurrentGraphNode.IsEndNode)
         {
-            Console.WriteLine(CurrentGraphNode.Move is null ? null : CurrentGraphNode.Move.ToString());
+            Move? maybenullmove = CurrentGraphNode.Move;
+            if(maybenullmove is Move NotNullMove){
+
+                Console.WriteLine(NotNullMove.AlgebraticMove);
+            }
+            else
+            {
+                Console.WriteLine("Start");
+            }
             CurrentGraphNode = CurrentGraphNode.Children.ToArray()[0];
         }
 
