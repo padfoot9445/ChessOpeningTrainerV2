@@ -5,17 +5,19 @@ using Chess;
 class LichessPgnParser : BasePgnParser, IPgnParser
 {
 
-    private protected override GameGraphNode GetGameGraph(ChessBoard BoardInStartingPosition, string Pgn)
+    private protected override GameGraphNode GetGameGraph(ChessBoard BoardInStartingPosition, string Pgn, GameGraphNode? beginning=null)
     {
+        char[] View = Pgn.ToCharArray();
         //parse until a branch, and then extract that, recurse, and then keep going
         int Start = 0;
         int Current = 0; //Current should always point to the character currently being processed
         string CurrentAlgMove;
-        Move CurrentLibMove;
-        GameGraphNode Beginning = GameGraphNode.InitialState();
+        BoardRepresentations.Move CurrentLibMove;
+        GameGraphNode Beginning = beginning is not null? beginning: GameGraphNode.InitialState();
         List<GameGraphNode> NodeStack = [Beginning];
         while(Current < Pgn.Length)
         {
+            Start = Current;
             //remove number. leading space, and any leading dots
             if(int.TryParse(Pgn[Current].ToString(), out int _)) //if the current character is a number, aka a new move
             {
@@ -25,29 +27,41 @@ class LichessPgnParser : BasePgnParser, IPgnParser
                 }
                 Start = Current;
             }
-            //then, extract the half-move
-            while(!IsWhiteSpace(Pgn[Current]))
+            //then, extract the half-move(the length check being in-front is important as it should short-circuit, preventing the access of Pgn[Current] which would be invalid when the length check is false)
+            while(Current < Pgn.Length &&!IsWhiteSpace(Pgn[Current]))
             {
                 Current++;
             }
             CurrentAlgMove = Pgn[Start..Current];
             Console.WriteLine(CurrentAlgMove);
-            CurrentLibMove = new Move(CurrentAlgMove);
-            Current++; //increase to consume whitespace between two half-moves or between a half-move and a new move, etc
-            //make the move on the board
-            BoardInStartingPosition.Move(CurrentLibMove);
+            CurrentLibMove = new BoardRepresentations.Move(CurrentAlgMove);
+            
             bool HasComment = false;
-            if (Pgn[Current] == '{')
+            //don't even try to process comment if we know we've ran out of pgn
+            if(Current < Pgn.Length)
             {
-                Start = ++Current; //++current to not include the curly brace in start
-                //check for move-comment
-                while(Pgn[Current] != '}'){ Current++; }
-                HasComment = true;
+                if (IsWhiteSpace(Pgn[Current])) { Current++; } //increase to consume whitespace between two half-moves or between a half-move and a new move, etc
+                //make the move on the board
+                BoardInStartingPosition.Move(CurrentLibMove.AlgebraticMove);
+                if (Current < Pgn.Length && Pgn[Current] == '{')
+                {
+                    Current += 2;
+                    Start = Current; //Current += 2 to not include the curly brace in start and also not include the leading brace
+                    //check for move-comment
+                    while(Pgn[Current] != '}'){ Current++; }
+                    Current++; //to also remove the space after the curly brace
+                    HasComment = true;
+                }
+            
             }
-            //create current node first, and then try to recurse if necessary
+             //create current node first, and then try to recurse if necessary
             NodeStack.Add(GameGraphNode.New((Fen)BoardInStartingPosition.ToFen(), CurrentLibMove, BoardInStartingPosition.Turn, HasComment ? Pgn[Start..(Current - 1)] : null));//current - 1 to skip the curly brace; and whoever's turn it is
-            if(HasComment){ Current++; } //increment current again to skip the space after the comment
-            if(Pgn[Current] == '(')
+            //then add this to the parent properly
+            NodeStack[^2].AddChildNode(NodeStack[^1]);
+            
+            if(Current < Pgn.Length && HasComment && IsWhiteSpace(Pgn[Current])){ Current++; } //increment current again to skip the space after the comment
+            // again, don't process branches if we've ran out of pgn
+            if(Current < Pgn.Length && Pgn[Current] == '(')
             {
                 Current++;
                 Start = Current;//to skip the start bracket
@@ -59,12 +73,14 @@ class LichessPgnParser : BasePgnParser, IPgnParser
                     Current++;
                 }
                 //start..current would be the entire branching line
-                NodeStack[-2].AddChildNode(
-                    GetGameGraph(
-                        ChessBoard.LoadFromFen(NodeStack[-2].PositionAfterMove.FenString), //Fen of the parent position used to create a new chessboard as a starting position
-                        Pgn[Start..(Current - 1)] //extracted pgn, minus start and ending bracket
-                    )
+                // No need to add the return value to anything as we're passing in nodestack ^2, so anything that needs to be done will have been done within the function call
+                GetGameGraph(
+                    ChessBoard.LoadFromFen(NodeStack[^2].PositionAfterMove.FenString), //Fen of the parent position used to create a new chessboard as a starting position
+                    Pgn[Start..(Current - 1)], //extracted pgn, minus start and ending bracket
+                    NodeStack[^2]
                 );
+                Current++;
+                //to skip the whitespace after a branch
             }
             //shouldn't need any special logic to keep processing for both num..., new move, and just space-move formats
         }
