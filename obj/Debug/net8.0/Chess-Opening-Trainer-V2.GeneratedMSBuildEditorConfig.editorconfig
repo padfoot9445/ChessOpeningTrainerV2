@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Chess_Opening_Trainer_V2
-build_property.ProjectDir = D:\coding\c#\chess\Chess-Opening-Trainer-V2\
+build_property.ProjectDir = d:\coding\c#\chess\Chess-Opening-Trainer-V2\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
