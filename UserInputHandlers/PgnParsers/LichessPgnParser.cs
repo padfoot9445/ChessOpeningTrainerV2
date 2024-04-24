@@ -1,15 +1,47 @@
 namespace UserInputHandlers.PgnParsers;
 
+using System.Collections.Frozen;
+using System.Collections.Immutable;
 using BoardRepresentations;
 using Chess;
 class LichessPgnParser : BasePgnParser, IPgnParser
 {
-
-    private protected override GameGraphNode GetGameGraph(ChessBoard BoardInStartingPosition, string Pgn, GameGraphNode? beginning=null)
+    public static readonly FrozenSet<char> LichessAnnotationCharacters = new HashSet<char>() { '?', '!', '=' , '*'}.ToFrozenSet();
+    private protected override GameGraphNode GetGameGraph(ChessBoard board, string Pgn, GameGraphNode? beginning = null)
     {
-        char[] View = Pgn.ToCharArray();
+        char?[] charArray = Array.ConvertAll(Pgn.Trim().ToCharArray(), (char x) => (char?)x);
+        int Current = 0;
+        while(Current < charArray.Length)
+        {
+            if(charArray[Current] == '{')
+            {
+                while(charArray[Current] != '}'){ Current++; }
+            }
+            else if(charArray[Current] == '[')
+            {
+                while(charArray[Current] != ']'){ charArray[Current] = null; Current++; }
+                charArray[Current] = null; //get the closing bracket as well
+            }
+            else if(LichessAnnotationCharacters.Contains((char)charArray[Current]!) || charArray[Current] == '\n' || charArray[Current] == '\r')
+            {
+                charArray[Current] = null;
+            }
+            Current++;
+        }
+        List<char> finishedProccessingApartFromAppendingSpaceList = Array.ConvertAll(
+            (from char? c in charArray where c is not null select c).ToArray(), (char? x) => (char)x!
+        ).ToList();
+        Console.WriteLine("2");
+        Console.WriteLine(Pgn);
+        Console.WriteLine(new string(finishedProccessingApartFromAppendingSpaceList.ToArray()));;
+        string e = new string(finishedProccessingApartFromAppendingSpaceList.ToArray());
+        return GetGameGraphAfterPreprocessing(board, e.Trim() + ' ', beginning);
+    }
+
+    private protected GameGraphNode GetGameGraphAfterPreprocessing(ChessBoard BoardInStartingPosition, string Pgn, GameGraphNode? beginning=null)
+    {
         //parse until a branch, and then extract that, recurse, and then keep going
-        int Start = 0;
+        int Start;
         int Current = 0; //Current should always point to the character currently being processed
         string CurrentAlgMove;
         BoardRepresentations.Move CurrentLibMove;
@@ -35,7 +67,6 @@ class LichessPgnParser : BasePgnParser, IPgnParser
                     Current++;
                 }
                 CurrentAlgMove = Pgn[Start..Current];
-                Console.WriteLine(CurrentAlgMove);
                 CurrentLibMove = new BoardRepresentations.Move(CurrentAlgMove);
                 
                 bool HasComment = false;
@@ -77,7 +108,7 @@ class LichessPgnParser : BasePgnParser, IPgnParser
                 }
                 //start..current would be the entire branching line
                 // No need to add the return value to anything as we're passing in nodestack ^2, so anything that needs to be done will have been done within the function call
-                GetGameGraph(
+                GetGameGraphAfterPreprocessing(
                     ChessBoard.LoadFromFen(NodeStack[^2].PositionAfterMove.FenString), //Fen of the parent position used to create a new chessboard as a starting position
                     Pgn[Start..(Current - 1)], //extracted pgn, minus start and ending bracket
                     NodeStack[^2]
