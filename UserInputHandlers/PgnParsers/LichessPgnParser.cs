@@ -6,7 +6,7 @@ using BoardRepresentations;
 using Chess;
 class LichessPgnParser : BasePgnParser, IPgnParser
 {
-    public static readonly FrozenSet<char> LichessAnnotationCharacters = new HashSet<char>() { '?', '!', '=' , '*'}.ToFrozenSet();
+    public static readonly FrozenSet<char> LichessAnnotationCharacters = new HashSet<char>() { '?', '!' , '*'}.ToFrozenSet();
     private protected override GameGraphNode GetGameGraph(ChessBoard board, string Pgn, GameGraphNode? beginning = null)
     {
         char?[] charArray = Array.ConvertAll(Pgn.Trim().ToCharArray(), (char x) => (char?)x);
@@ -31,9 +31,6 @@ class LichessPgnParser : BasePgnParser, IPgnParser
         List<char> finishedProccessingApartFromAppendingSpaceList = Array.ConvertAll(
             (from char? c in charArray where c is not null select c).ToArray(), (char? x) => (char)x!
         ).ToList();
-        Console.WriteLine("2");
-        Console.WriteLine(Pgn);
-        Console.WriteLine(new string(finishedProccessingApartFromAppendingSpaceList.ToArray()));;
         string e = new string(finishedProccessingApartFromAppendingSpaceList.ToArray());
         return GetGameGraphAfterPreprocessing(board, e.Trim() + ' ', beginning);
     }
