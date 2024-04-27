@@ -48,9 +48,9 @@ class LichessPgnParser : BasePgnParser, IPgnParser
         {
             Start = Current;
             //remove number. leading space, and any leading dots
-            if(int.TryParse(Pgn[Current].ToString(), out int _)) //if the current character is a number, aka a new move
+            if(IsNum(Pgn[Current])) //if the current character is a number, aka a new move
             {
-                while(Pgn[Current] == '.' || IsWhiteSpace(Pgn[Current]) || int.TryParse(Pgn[Current].ToString(), out _)) //then while its a number, period, or space, increment
+                while(Pgn[Current] == '.' || IsWhiteSpace(Pgn[Current]) || IsNum(Pgn[Current])) //then while its a number, period, or space, increment
                 {
                     Current++;
                 }
