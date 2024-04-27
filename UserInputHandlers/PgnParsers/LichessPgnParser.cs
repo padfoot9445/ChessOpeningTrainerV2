@@ -40,6 +40,7 @@ class LichessPgnParser : BasePgnParser, IPgnParser
         //parse until a branch, and then extract that, recurse, and then keep going
         int Start;
         int Current = 0; //Current should always point to the character currently being processed
+        //cannot be extracted to base class because this function is recursive lmfao
         string CurrentAlgMove;
         BoardRepresentations.Move CurrentLibMove;
         GameGraphNode Beginning = beginning is not null? beginning: GameGraphNode.InitialState();
