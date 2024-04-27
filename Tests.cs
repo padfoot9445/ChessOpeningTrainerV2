@@ -3,12 +3,12 @@ using UserInputHandlers.PgnParsers;
 using BoardRepresentations;
 using System.Text;
 
-public class Tests
+public static class Tests
 {
     const string LichessPgnParserTestWithExamplePgnFilePathInput = """D:\coding\c#\chess\Chess-Opening-Trainer-V2\UserInputHandlers\PgnParsers\Tests\LichessPgnParserTestInput.txt""";
     private static Test[] tests = [LichessPgnParserTestWithExamplePgn];
     delegate (bool, string) Test();
-    static bool RunAll()
+    public static (bool, string) RunAll()
     {
         bool overall = true;
         StringBuilder output = new StringBuilder();
@@ -20,8 +20,7 @@ public class Tests
             overall = overall && TestIsValid;
             output.AppendLine(TestOutput);
         }
-        Console.WriteLine(output.ToString());
-        return overall;
+        return (overall, output.ToString());
 
     }
     private static (bool, string) LichessPgnParserTestWithExamplePgn()
