@@ -49,15 +49,16 @@ class LichessPgnParser : BasePgnParser, IPgnParser
         {
             Start = Current;
             //remove number. leading space, and any leading dots
-            if(IsNum(Pgn[Current])) //if the current character is a number, aka a new move
+            if (IsNum(Pgn[Current])) //if the current character is a number, aka a new move
             {
-                while(Pgn[Current] == '.' || IsWhiteSpace(Pgn[Current]) || IsNum(Pgn[Current])) //then while its a number, period, or space, increment
+                while (Pgn[Current] == '.' || IsWhiteSpace(Pgn[Current]) || IsNum(Pgn[Current])) //then while its a number, period, or space, increment
                 {
                     Current++;
                 }
                 Start = Current;
             }
             //then, extract the half-move(the length check being in-front is important as it should short-circuit, preventing the access of Pgn[Current] which would be invalid when the length check is false)
+            // this doesn't work if you enclose it inside IsNum because this is also responsible for parsing the latter half of the half-moves - maybe change this?
             if(Current< Pgn.Length && Pgn[Current] != '(')
             {    
                 while(Current < Pgn.Length &&!IsWhiteSpace(Pgn[Current]))
@@ -93,6 +94,7 @@ class LichessPgnParser : BasePgnParser, IPgnParser
                 if(Current < Pgn.Length && HasComment && IsWhiteSpace(Pgn[Current])){ Current++; } //increment current again to skip the space after the comment
                 // again, don't process branches if we've ran out of pgn
             }    
+            
             if(Current < Pgn.Length && Pgn[Current] == '(')
             {
                 Current++;
