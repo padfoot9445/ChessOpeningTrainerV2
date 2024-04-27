@@ -50,7 +50,7 @@ class LichessPgnParser : BasePgnParser, IPgnParser
             //remove number. leading space, and any leading dots
             if(int.TryParse(Pgn[Current].ToString(), out int _)) //if the current character is a number, aka a new move
             {
-                while(Pgn[Current] == '.' || IsWhiteSpace(Pgn[Current]) || int.TryParse(Pgn[Current].ToString(), out int _)) //then while its a number, period, or space, increment
+                while(Pgn[Current] == '.' || IsWhiteSpace(Pgn[Current]) || int.TryParse(Pgn[Current].ToString(), out _)) //then while its a number, period, or space, increment
                 {
                     Current++;
                 }
