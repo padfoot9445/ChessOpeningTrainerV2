@@ -25,8 +25,14 @@ class GameGraphNode
     /// <returns></returns>
     public static GameGraphNode New(HashSet<GameGraphNode> Parents, HashSet<GameGraphNode> Children, Fen PositionAfterMove, Move Move, PieceColor Color, string? Comment = null)
     {
-        if(Cache.TryGetValue(PositionAfterMove, out GameGraphNode? value)) { return value; }
-        return new GameGraphNode(Parents, Children, PositionAfterMove, Move, Color, Comment);
+        if(Cache.TryGetValue(PositionAfterMove, out GameGraphNode? value)) 
+        {
+            value.Children.UnionWith(Children);
+            value.Parents.UnionWith(Parents);
+            value.Moves.Add(Move);
+            return value; 
+        }
+        return new GameGraphNode(Parents, Children, PositionAfterMove, [Move], Color, Comment is null? []: [Comment]);
     }
     /// <summary>
     /// 
@@ -50,20 +56,20 @@ class GameGraphNode
     public HashSet<GameGraphNode> Parents { get; }
     public HashSet<GameGraphNode> Children { get; }
     public Fen PositionAfterMove{ get; }
-    public BoardRepresentations.Move? Move{ get; }
-    public string Comment{ get; }
+    public HashSet<BoardRepresentations.Move> Moves{ get; }
+    public HashSet<string> Comment{ get; }
     public Chess.PieceColor ColorToMove{ get; }
-    private GameGraphNode(HashSet<GameGraphNode> Parents, HashSet<GameGraphNode> Children, Fen PositionAfterMove, Move? Move, PieceColor Color, string? Comment = null)
+    private GameGraphNode(HashSet<GameGraphNode> Parents, HashSet<GameGraphNode> Children, Fen PositionAfterMove, HashSet<Move> Move, PieceColor Color, HashSet<string>? Comment = null)
     {
-        (this.Parents, this.Children, this.PositionAfterMove, this.Move, this.ColorToMove, this.Comment) = (Parents, Children, PositionAfterMove, Move, Color, Comment is not null ? Comment : string.Empty);
+        (this.Parents, this.Children, this.PositionAfterMove, this.Moves, this.ColorToMove, this.Comment) = (Parents, Children, PositionAfterMove, Move, Color, Comment is not null ? Comment: []);
     }
-    private GameGraphNode(): this(new HashSet<GameGraphNode>(), new HashSet<GameGraphNode>(), (Fen)new ChessBoard().ToFen(), null, PieceColor.White, null){}
+    private GameGraphNode(): this(new HashSet<GameGraphNode>(), new HashSet<GameGraphNode>(), (Fen)new ChessBoard().ToFen(), [], PieceColor.White, null){}
     public static GameGraphNode InitialState()
     {
         return new();
     }
     public bool IsEndNode => Children.Count == 0;
-    public bool IsTreeBeginning => Move is null;
+    public bool IsTreeBeginning => Moves is null;
     public override int GetHashCode()
     {
         return PositionAfterMove.GetHashCode();
